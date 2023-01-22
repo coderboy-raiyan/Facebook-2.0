@@ -1,7 +1,11 @@
 {
+  "name": "server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "license": "MIT",
+  "author": "https://github.com/coderboy-raiyan/Facebook-2.0.git",
   "dependencies": {
     "eslint": "^8.32.0",
-    "husky": "^8.0.3",
     "prettier": "^2.8.3"
   },
   "devDependencies": {

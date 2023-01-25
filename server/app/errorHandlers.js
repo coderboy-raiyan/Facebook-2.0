@@ -1,0 +1,16 @@
+function notFound(__req, _res, next) {
+    const error = new Error('Resource not found');
+    error.status = 400;
+    next(error);
+}
+
+function globalErrorHandler(error, __req, res) {
+    if (error.status) {
+        return res.status(error.status).json({ success: false, message: error.message });
+    }
+    return res
+        .status(500)
+        .json({ message: error.message ? error.details : 'Something went wrong!!' });
+}
+
+module.exports = { notFound, globalErrorHandler };

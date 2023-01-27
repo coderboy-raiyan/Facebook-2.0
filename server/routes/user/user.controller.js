@@ -1,4 +1,3 @@
-/* eslint-disable no-new */
 const createAsyncError = require('../../middlewares/createAsyncError');
 const UserModel = require('../../model/User.model');
 const ErrorHandler = require('../../utils/errorHandler');

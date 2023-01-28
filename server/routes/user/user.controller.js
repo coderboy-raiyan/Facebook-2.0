@@ -3,6 +3,7 @@ const { generateToken } = require('../../libs/jwt');
 const createAsyncError = require('../../middlewares/createAsyncError');
 const UserModel = require('../../model/User.model');
 const ErrorHandler = require('../../utils/errorHandler');
+const { sendVerificationEmail } = require('../../utils/mailer');
 const { validateEmail, validateLength, validateUsername } = require('../../utils/validation');
 
 // @desc Register user
@@ -55,7 +56,8 @@ const register = createAsyncError(async (req, res, next) => {
 
     const emailVerificationToken = generateToken({ _id: user._doc._id }, '30m');
 
-    console.log(emailVerificationToken);
+    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
+    sendVerificationEmail(user._doc.email, user._doc.first_name, url);
 
     return res.status(200).json({ success: true, user });
 });

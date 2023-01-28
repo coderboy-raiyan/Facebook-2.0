@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const { generateToken } = require('../../libs/jwt');
 const createAsyncError = require('../../middlewares/createAsyncError');
 const UserModel = require('../../model/User.model');
 const ErrorHandler = require('../../utils/errorHandler');
@@ -8,8 +9,7 @@ const { validateEmail, validateLength, validateUsername } = require('../../utils
 // @routes POST - /api/v1/user/register
 
 const register = createAsyncError(async (req, res, next) => {
-    const { first_name, last_name, username, email, password, gender, bYear, bMonth, bDay } =
-        req.body;
+    const { first_name, last_name, email, password, gender, bYear, bMonth, bDay } = req.body;
 
     if (!validateEmail(email)) {
         return next(new ErrorHandler('Invalid email address!!', 400));
@@ -52,6 +52,11 @@ const register = createAsyncError(async (req, res, next) => {
         bMonth,
         bDay,
     }).save();
+
+    const emailVerificationToken = generateToken({ _id: user._doc._id }, '30m');
+
+    console.log(emailVerificationToken);
+
     return res.status(200).json({ success: true, user });
 });
 

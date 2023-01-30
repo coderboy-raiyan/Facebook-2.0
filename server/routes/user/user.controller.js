@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { generateToken } = require('../../libs/jwt');
 const createAsyncError = require('../../middlewares/createAsyncError');
 const UserModel = require('../../model/User.model');
@@ -56,10 +57,48 @@ const register = createAsyncError(async (req, res, next) => {
 
     const emailVerificationToken = generateToken({ _id: user._doc._id }, '30m');
 
-    const url = `${process.env.BASE_URL}/activate/${emailVerificationToken}`;
+    const url = `${process.env.BASE_URL}/api/v1/user/activate/${emailVerificationToken}`;
     sendVerificationEmail(user._doc.email, user._doc.first_name, url);
 
-    return res.status(200).json({ success: true, user });
+    const token = generateToken({ _id: user._doc._id }, '7d');
+
+    return res.status(200).json({
+        success: true,
+        message: 'Sign up success. Please activate your email to start',
+        user: {
+            _id: user._doc._id,
+            username: user._doc.username,
+            picture: user._doc.picture,
+            first_name: user._doc.first_name,
+            last_name: user._doc.last_name,
+            token,
+            verified: user._doc.verified,
+        },
+    });
 });
 
-module.exports = { register };
+// @desc Activate user
+// @routes POST - /api/v1/user/register
+
+const activateAccount = createAsyncError(async (req, res, next) => {
+    const { token } = req.body;
+    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+        if (err) {
+            return next(new ErrorHandler(err.message, 403));
+        }
+        const foundUser = UserModel.findOne({ _id: decoded._id });
+
+        if (foundUser?.verified) {
+            return res
+                .status(400)
+                .json({ success: false, message: 'This email is already exists' });
+        }
+        await UserModel.findByIdAndUpdate({ _id: decoded._id }, { verified: true });
+
+        return res
+            .status(200)
+            .json({ success: true, message: 'Account has been verified Successfully' });
+    });
+});
+
+module.exports = { register, activateAccount };

@@ -78,7 +78,7 @@ const register = createAsyncError(async (req, res, next) => {
 });
 
 // @desc Activate user
-// @routes POST - /api/v1/user/register
+// @routes POST - /api/v1/user/activate
 
 const activateAccount = createAsyncError(async (req, res, next) => {
     const { token } = req.body;
@@ -86,12 +86,12 @@ const activateAccount = createAsyncError(async (req, res, next) => {
         if (err) {
             return next(new ErrorHandler(err.message, 403));
         }
-        const foundUser = UserModel.findOne({ _id: decoded._id });
+        const foundUser = await UserModel.findOne({ _id: decoded._id });
 
         if (foundUser?.verified) {
             return res
                 .status(400)
-                .json({ success: false, message: 'This email is already exists' });
+                .json({ success: false, message: 'This email is already verified' });
         }
         await UserModel.findByIdAndUpdate({ _id: decoded._id }, { verified: true });
 
@@ -101,4 +101,44 @@ const activateAccount = createAsyncError(async (req, res, next) => {
     });
 });
 
-module.exports = { register, activateAccount };
+// @desc Login user
+// @routes POST - /api/v1/user/login
+
+const login = createAsyncError(async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+        return res.status(400).json({
+            success: false,
+            message: 'This email address that you entered is not connected to an account',
+        });
+    }
+
+    const checkPassword = await bcrypt.compare(password, user._doc.password);
+
+    if (!checkPassword) {
+        return res.status(401).json({
+            success: false,
+            message: 'Invalid credentials',
+        });
+    }
+    const token = generateToken({ _id: user._doc._id }, '7d');
+
+    return res.status(200).json({
+        success: true,
+        message: 'Sign in success',
+        user: {
+            _id: user._doc._id,
+            username: user._doc.username,
+            picture: user._doc.picture,
+            first_name: user._doc.first_name,
+            last_name: user._doc.last_name,
+            token,
+            verified: user._doc.verified,
+        },
+    });
+});
+
+module.exports = { register, activateAccount, login };

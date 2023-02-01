@@ -11,5 +11,5 @@
     "source.organizeImports": true
   },
   "eslint.alwaysShowStatus": true,
-  "cSpell.words": ["transection", "transections"]
+  "cSpell.words": ["Formik", "transection", "transections"]
 }

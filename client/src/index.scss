@@ -39,3 +39,18 @@ a {
     --shadow-3: rgba(0, 0, 0, 0.3);
     --shadow-inset: rgba(255, 255, 255, 0.5);
 }
+
+.blue_button {
+    background-color: var(--blue-color);
+    padding: 8.5px 12px;
+    border-radius: 7px;
+    font-weight: 600;
+    color: #fff;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    font-family: inherit;
+}

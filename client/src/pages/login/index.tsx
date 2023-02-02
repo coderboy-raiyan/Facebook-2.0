@@ -1,6 +1,6 @@
 import { Form, Formik } from "formik";
 import { Link } from "react-router-dom";
-import "./style.css";
+import "./style.scss";
 
 interface MyFormValues {
     email: string;
@@ -20,7 +20,7 @@ function Login() {
                         </h4>
                     </div>
                     <div className="login_2">
-                        <div className="login_2_warp">
+                        <div className="login_2_wrap">
                             <Formik
                                 onSubmit={(values, actions) => {
                                     console.log({ values, actions });
@@ -33,17 +33,21 @@ function Login() {
                                     <Form>
                                         <input type="email" />
                                         <input type="password" />
-                                        <button type="submit">Log In</button>
+                                        <button className="blue_button" type="submit">
+                                            Log In
+                                        </button>
                                     </Form>
                                 )}
                             </Formik>
-                            <Link to="/forget">Forgotten password ?</Link>
+                            <Link to="/forget" className="forget_password">
+                                Forgotten password ?
+                            </Link>
                             <div className="sign_splitter" />
-                            <button type="button" className="blue_button">
+                            <button type="button" className="blue_button open_signup">
                                 Create account
                             </button>
                         </div>
-                        <Link to="/">
+                        <Link className="sign_extra" to="/">
                             <b>Create a page</b>for a celebrity, brand or businessman
                         </Link>
                     </div>

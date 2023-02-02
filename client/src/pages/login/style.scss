@@ -1,0 +1,65 @@
+.login_wrapper {
+    background: var(--bg-secondary);
+}
+.login_wrap {
+    height: 78vh;
+    // color: var(--bg-primary);
+    .login_1 {
+        width: 300px;
+        margin: 0 auto;
+
+        h4 {
+            font-size: 20px;
+        }
+    }
+
+    .login_2 {
+        text-align: center;
+
+        .login_2_wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            background-color: var(--bg-primary);
+            box-shadow: 0 1px 2px var(--shadow-1);
+            padding: 1rem;
+            padding-bottom: 2rem;
+            width: 350px;
+            height: fit-content;
+            margin: 1rem auto;
+            border-radius: 10px;
+
+            button {
+                width: 100%;
+                height: 50px;
+                font-size: 17px;
+                font-weight: 700;
+            }
+
+            .forget_password {
+                color: var(--blue-color);
+                font-size: 14px;
+            }
+            .forget_password:hover {
+                text-decoration: underline;
+            }
+
+            .sign_splitter {
+                width: 100%;
+                height: 1px;
+                background: var(--bg-third);
+            }
+            .open_signup {
+                background: var(--green-color);
+                width: 70%;
+                margin-top: 1rem;
+                font-weight: 600;
+                font-size: 17px;
+            }
+        }
+        .sign_extra {
+            font-size: 15px;
+        }
+    }
+}

@@ -7,6 +7,16 @@ import "./style.scss";
 function Login() {
     const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
 
+    function handelLoginChange(e: React.ChangeEvent<HTMLInputElement>) {
+        const { name, value } = e.target;
+        setLoginInfo((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    }
+
+    console.log(loginInfo);
+
     return (
         <section className="login">
             <div className="login_wrapper">
@@ -31,11 +41,15 @@ function Login() {
                                             type="email"
                                             name="email"
                                             placeholder="Email address or phone number"
+                                            handelLoginChange={handelLoginChange}
+                                            values={loginInfo.email}
                                         />
                                         <LoginInputs
                                             type="password"
                                             name="password"
                                             placeholder="Password"
+                                            handelLoginChange={handelLoginChange}
+                                            values={loginInfo.password}
                                         />
                                         <button className="blue_button" type="submit">
                                             Log In

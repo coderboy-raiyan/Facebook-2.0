@@ -1,14 +1,12 @@
 import { Form, Formik } from "formik";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import LoginInputs from "../../components/inputs/loginInputs";
 import "./style.scss";
 
-interface MyFormValues {
-    email: string;
-    password: string;
-}
-
 function Login() {
-    const initialValues: MyFormValues = { email: "", password: "" };
+    const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
+
     return (
         <section className="login">
             <div className="login_wrapper">
@@ -24,15 +22,21 @@ function Login() {
                             <Formik
                                 onSubmit={(values, actions) => {
                                     console.log({ values, actions });
-                                    alert(JSON.stringify(values, null, 2));
-                                    actions.setSubmitting(false);
                                 }}
-                                initialValues={initialValues}
+                                initialValues={loginInfo}
                             >
                                 {(formik: any) => (
                                     <Form>
-                                        <input type="email" />
-                                        <input type="password" />
+                                        <LoginInputs
+                                            type="email"
+                                            name="email"
+                                            placeholder="Email address or phone number"
+                                        />
+                                        <LoginInputs
+                                            type="password"
+                                            name="password"
+                                            placeholder="Password"
+                                        />
                                         <button className="blue_button" type="submit">
                                             Log In
                                         </button>
@@ -48,7 +52,7 @@ function Login() {
                             </button>
                         </div>
                         <Link className="sign_extra" to="/">
-                            <b>Create a page</b>for a celebrity, brand or businessman
+                            <b>Create a page</b> for a celebrity, brand or businessman
                         </Link>
                     </div>
                 </div>

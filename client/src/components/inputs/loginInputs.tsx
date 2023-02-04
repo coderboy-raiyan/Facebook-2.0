@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useField } from "formik";
+import { ErrorMessage, useField } from "formik";
 
 type IProps = "email" | "password" | string;
 
@@ -13,12 +13,13 @@ function LoginInputs({
     type: IProps;
     name: IProps;
     values: string;
-
     handelLoginChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
     const [field, meta] = useField<IProps>(props);
+    console.log(meta.error);
     return (
         <div className="relative flex w-[320px] flex-col items-center">
+            <div>{meta.touched && meta.error && <ErrorMessage name={field.name} />}</div>
             <input
                 {...field}
                 {...props}

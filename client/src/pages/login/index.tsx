@@ -1,6 +1,7 @@
 import { Form, Formik } from "formik";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import * as yup from "yup";
 import LoginInputs from "../../components/inputs/loginInputs";
 import "./style.scss";
 
@@ -15,7 +16,15 @@ function Login() {
         }));
     }
 
-    console.log(loginInfo);
+    const loginValidation = yup.object({
+        email: yup.string().email("Invalid email format").required("Mail is required"),
+
+        password: yup
+            .string()
+            .min(6, "Password must be at least 6 charterers!")
+            .max(100)
+            .required("Password is required!!"),
+    });
 
     return (
         <section className="login">
@@ -34,6 +43,7 @@ function Login() {
                                     console.log({ values, actions });
                                 }}
                                 initialValues={loginInfo}
+                                validationSchema={loginValidation}
                             >
                                 {(formik: any) => (
                                     <Form>

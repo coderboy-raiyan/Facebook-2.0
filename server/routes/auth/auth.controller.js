@@ -8,7 +8,7 @@ const { sendVerificationEmail } = require('../../utils/mailer');
 const { validateEmail, validateLength, validateUsername } = require('../../utils/validation');
 
 // @desc Register user
-// @routes POST - /api/v1/user/register
+// @routes POST - /api/v1/auth/register
 
 const register = createAsyncError(async (req, res, next) => {
     const { first_name, last_name, email, password, gender, bYear, bMonth, bDay } = req.body;
@@ -60,7 +60,17 @@ const register = createAsyncError(async (req, res, next) => {
     const url = `${process.env.BASE_URL}/api/v1/user/activate/${emailVerificationToken}`;
     sendVerificationEmail(user._doc.email, user._doc.first_name, url);
 
-    const token = generateToken({ _id: user._doc._id }, '7d');
+    const token = generateToken({ _id: user._doc._id }, '7h');
+
+    const AccessToken = generateToken({ _id: user._doc._id }, '20d');
+
+    res.cookie('__refresh_token', AccessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+        path: '/',
+        maxAge: 20 * 24 * 60 * 60 * 1000,
+    });
 
     return res.status(200).json({
         success: true,
@@ -78,7 +88,7 @@ const register = createAsyncError(async (req, res, next) => {
 });
 
 // @desc Activate user
-// @routes POST - /api/v1/user/activate
+// @routes POST - /api/v1/auth/activate
 
 const activateAccount = createAsyncError(async (req, res, next) => {
     const { token } = req.body;
@@ -102,7 +112,7 @@ const activateAccount = createAsyncError(async (req, res, next) => {
 });
 
 // @desc Login user
-// @routes POST - /api/v1/user/login
+// @routes POST - /api/v1/auth/login
 
 const login = createAsyncError(async (req, res) => {
     const { email, password } = req.body;
@@ -126,6 +136,16 @@ const login = createAsyncError(async (req, res) => {
     }
     const token = generateToken({ _id: user._doc._id }, '7d');
 
+    const AccessToken = generateToken({ _id: user._doc._id }, '20d');
+
+    res.cookie('__refresh_token', AccessToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+        path: '/',
+        maxAge: 20 * 24 * 60 * 60 * 1000,
+    });
+
     return res.status(200).json({
         success: true,
         message: 'Sign in success',
@@ -141,4 +161,48 @@ const login = createAsyncError(async (req, res) => {
     });
 });
 
-module.exports = { register, activateAccount, login };
+// @desc new refresh token generation
+// @routes GET - /api/v1/auth/refresh
+
+const refresh = createAsyncError(async (req, res, next) => {
+    const { __refresh_token } = req.cookies;
+
+    if (!__refresh_token) {
+        return next(new ErrorHandler('UnAuthorized', 403));
+    }
+    jwt.verify(__refresh_token, process.env.JWT_SECRET, async (err, decoded) => {
+        if (err) {
+            return next(new ErrorHandler('UnAuthorized', 403));
+        }
+        const check = await UserModel.findOne({ _id: decoded._id });
+
+        if (!check) {
+            return next(new ErrorHandler('Forbidden', 402));
+        }
+
+        const token = generateToken({ _id: decoded._doc._id }, '7d');
+
+        return res.status(200).json({ success: true, token });
+    });
+});
+
+// @desc Clear cookie and logout users
+// @routes POST - /api/v1/auth/logout
+
+const logout = createAsyncError(async (req, res) => {
+    const { __refresh_token } = req.cookies;
+
+    if (!__refresh_token) {
+        return res.statusCode(200);
+    }
+
+    res.clearCookie('__refresh_token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'None',
+    });
+
+    return res.status(200).json({ success: true, message: 'Logout successfully' });
+});
+
+module.exports = { register, activateAccount, login, refresh, logout };

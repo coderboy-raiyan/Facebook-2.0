@@ -2,7 +2,7 @@ import { Form, Formik } from "formik";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
-import LoginInputs from "../../components/inputs/loginInputs";
+import LoginInputs from "../../components/inputs/loginInputs/loginInputs";
 import "./style.scss";
 
 function Login() {
@@ -17,8 +17,6 @@ function Login() {
     }
 
     const loginValidation = yup.object({
-        email: yup.string().email("Invalid email format").required("Mail is required"),
-
         password: yup
             .string()
             .min(6, "Password must be at least 6 charterers!")

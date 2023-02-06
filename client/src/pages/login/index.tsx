@@ -1,27 +1,34 @@
+import LoginInput from "components/inputs/loginInput";
 import { Form, Formik } from "formik";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import * as yup from "yup";
-import LoginInputs from "../../components/inputs/loginInputs/loginInputs";
+import * as Yup from "yup";
+
 import "./style.scss";
 
-function Login() {
-    const [loginInfo, setLoginInfo] = useState({ email: "", password: "" });
+const loginInfos = {
+    email: "",
+    password: "",
+};
 
-    function handelLoginChange(e: React.ChangeEvent<HTMLInputElement>) {
+function Login() {
+    const [login, setLogin] = useState(loginInfos);
+    const { email, password } = login;
+    const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setLoginInfo((prev) => ({
+        setLogin((prev) => ({
             ...prev,
             [name]: value,
         }));
-    }
-
-    const loginValidation = yup.object({
-        password: yup
-            .string()
-            .min(6, "Password must be at least 6 charterers!")
-            .max(100)
-            .required("Password is required!!"),
+    };
+    const loginValidation = Yup.object({
+        email: Yup.string()
+            .required("Email address is required.")
+            .email("Must be a valid email.")
+            .max(100),
+        password: Yup.string()
+            .required("Password is required")
+            .min(6, "Password must be at least six characters"),
     });
 
     return (
@@ -37,29 +44,32 @@ function Login() {
                     <div className="login_2">
                         <div className="login_2_wrap">
                             <Formik
-                                onSubmit={(values, actions) => {
-                                    console.log({ values, actions });
+                                onSubmit={(values) => {
+                                    console.log(values);
                                 }}
-                                initialValues={loginInfo}
+                                enableReinitialize
+                                initialValues={{
+                                    email,
+                                    password,
+                                }}
                                 validationSchema={loginValidation}
                             >
-                                {(formik: any) => (
+                                {(formik) => (
                                     <Form>
-                                        <LoginInputs
-                                            type="email"
+                                        <LoginInput
+                                            type="text"
                                             name="email"
                                             placeholder="Email address or phone number"
-                                            handelLoginChange={handelLoginChange}
-                                            values={loginInfo.email}
+                                            onChange={handleLoginChange}
                                         />
-                                        <LoginInputs
+                                        <LoginInput
                                             type="password"
                                             name="password"
                                             placeholder="Password"
-                                            handelLoginChange={handelLoginChange}
-                                            values={loginInfo.password}
+                                            onChange={handleLoginChange}
+                                            bottom
                                         />
-                                        <button className="blue_button" type="submit">
+                                        <button type="submit" className="blue_button">
                                             Log In
                                         </button>
                                     </Form>

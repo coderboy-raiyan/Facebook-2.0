@@ -1,5 +1,6 @@
 import Footer from "./Footer";
 import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 
 import "./style.scss";
 
@@ -8,7 +9,7 @@ function Login() {
         <section className="login">
             <div className="login_wrapper">
                 <LoginForm />
-                <div className="register" />
+                <RegisterForm />
                 <Footer />
             </div>
         </section>
